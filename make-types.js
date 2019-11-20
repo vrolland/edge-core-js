@@ -1,49 +1,41 @@
 #!/usr/bin/env node
 
 const babel = require('@babel/core')
+const flowgen = require('flowgen')
 const fs = require('fs')
-const eslint = require('eslint')
+const prettier = require('prettier')
 
-function jsToTs(code) {
-  const output = code
-    // Change `+x` to `readonly x`:
-    .replace(/(\n *)\+(\[?[_a-zA-Z]+)/g, '$1readonly $2')
-    // Fix differently-named types:
-    .replace(/\bmixed\b/g, 'unknown')
-    .replace(/\| void\b/g, '| undefined')
-    // Fix `import type` syntax:
-    .replace(/\bimport type\b/g, 'import')
-    .replace(/\btype ([_a-zA-Z]+)( *[,\n}])/g, '$1$2')
-    // We aren't JS anymore:
-    .replace(/\/\/ @flow/, '')
-    .replace(/'(\.[^']*)\.js'/, "'$1'")
-
-  return output
+function tsToFlow(filename) {
+  let flow = flowgen.compiler.compileDefinitionFile(filename, {
+    inexact: false,
+    interfaceRecords: true
+  })
+  const header = '// @flow\n' + '/* eslint-disable no-use-before-define */\n'
+  flow = prettier.format(header + flow, {
+    parser: 'babel',
+    semi: false,
+    singleQuote: true
+  })
+  flow = flow.replace(/import {/g, 'import type {')
+  flow = flow.replace(/declare export {/, 'export type {')
+  return flow
 }
 
-// Transpile errors to plain Javascript and TypeScript:
-const errorFile = fs.readFileSync('src/types/error.js', 'utf8')
-const errorJs = babel.transformSync(errorFile, {
-  presets: ['@babel/preset-flow'],
+// Assemble the Flow types:
+let flowTypes = tsToFlow('./src/types/types.ts')
+flowTypes = flowTypes.replace(/'.\/error'/, "'./error.js.flow'")
+flowTypes += '\n' + fs.readFileSync('src/types/entries.js.flow', 'utf8')
+fs.writeFileSync('./index.js.flow', flowTypes)
+fs.writeFileSync('./types.js.flow', flowTypes)
+const errorTypes = tsToFlow('./src/types/error.ts')
+fs.writeFileSync('./error.js.flow', errorTypes)
+
+// Transpile errors to plain Javascript:
+const errorJs = babel.transformFileSync('src/types/error.ts', {
+  presets: ['@babel/preset-typescript'],
   plugins: [
     '@babel/plugin-transform-modules-commonjs',
     'babel-plugin-transform-fake-error-class'
   ]
 }).code
 fs.writeFileSync('types.js', errorJs)
-fs.writeFileSync('src/types/error.ts', jsToTs(errorFile))
-
-// Transpile Flow types to Typescript:
-const typesFile = fs.readFileSync('src/types/types.js', 'utf8')
-fs.writeFileSync('src/types/types.ts', jsToTs(typesFile))
-
-// Fix the files with ESLint:
-const cli = new eslint.CLIEngine({ fix: true, ignore: false })
-const report = cli.executeOnFiles(['./src/types/*.ts'])
-eslint.CLIEngine.outputFixes(report)
-if (eslint.CLIEngine.getErrorResults(report.results).length > 0) {
-  console.error(
-    'Error: Conversion to TypeScript failed. Please run `yarn lint` to see errors.'
-  )
-  process.exit(1)
-}

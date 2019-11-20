@@ -1,18 +1,5 @@
 // @flow
 
-import {
-  type EdgeContext,
-  type EdgeContextOptions,
-  type EdgeCorePlugins,
-  type EdgeFakeUser,
-  type EdgeFakeWorld,
-  type EdgeIo,
-  type EdgeLoginMessages,
-  type EdgeNativeIo
-} from './src/types/types.js'
-
-export * from './src/types/types.js'
-
 declare export function addEdgeCorePlugins(plugins: EdgeCorePlugins): mixed
 declare export function lockEdgeCorePlugins(): mixed
 declare export function closeEdge(): mixed
@@ -27,7 +14,7 @@ declare export function makeEdgeContext(
 ): Promise<EdgeContext>
 
 declare export function makeFakeEdgeWorld(
-  users?: Array<EdgeFakeUser>
+  users?: EdgeFakeUser[]
 ): Promise<EdgeFakeWorld>
 
 /**
@@ -49,7 +36,7 @@ declare export function MakeFakeEdgeWorld(props: {
   nativeIo?: EdgeNativeIo,
   onError?: (e: any) => mixed,
   onLoad: (context: EdgeContext) => mixed,
-  users: Array<EdgeFakeUser>
+  users: EdgeFakeUser[]
 }): any // React element
 
 /**
