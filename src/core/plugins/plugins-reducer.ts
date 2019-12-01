@@ -42,7 +42,7 @@ export const plugins = (
       }
       for (const pluginName in action.payload) {
         const plugin = action.payload[pluginName]
-        // $FlowFixMe - Flow doesn't see the refinement here:
+        // $FlowFixMe - Flow doesn't see the type refinement here:
         if (plugin.currencyInfo != null) out.currency[pluginName] = plugin
         // $FlowFixMe
         if (plugin.rateInfo != null) out.rate[pluginName] = plugin
