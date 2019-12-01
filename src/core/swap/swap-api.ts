@@ -46,7 +46,7 @@ export async function fetchSwapQuote(
 
       // Close unused quotes:
       for (const quote of quotes) {
-        if (quote !== bestQuote) quote.close()
+        if (quote !== bestQuote) quote.close().catch(e => {})
       }
 
       // Cobble together a URI:

@@ -103,12 +103,12 @@ const accountPixie: TamePixie<AccountProps> = combinePixies({
       let stopped: boolean = false
       let timeout: ReturnType<typeof setTimeout> | undefined
 
-      async function doSync() {
+      function doSync() {
         const ai: ApiInput = input as any // Safe, since input extends ApiInput
         const accountId = input.props.id
         const { accountWalletInfos } = input.props.selfState
 
-        try {
+        async function innerSync() {
           if (input.props.state.accounts[accountId] == null) return
           const changeLists = await Promise.all(
             accountWalletInfos.map(info => syncStorageWallet(ai, info.id))
@@ -120,9 +120,9 @@ const accountPixie: TamePixie<AccountProps> = combinePixies({
               loadAllWalletStates(ai, accountId)
             ])
           }
-        } catch (e) {
-          // We don't report sync failures, since that could be annoying.
         }
+        // We don't report sync failures, since that could be annoying.
+        innerSync().catch(e => {})
 
         if (!stopped) timeout = setTimeout(doSync, 30 * 1000)
       }
