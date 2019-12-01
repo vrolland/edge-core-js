@@ -315,7 +315,7 @@ export function applyKit(
   if (!loginTree.username) throw new Error('Cannot apply kit: missing username')
 
   const stashTree = getStash(ai, loginTree.username)
-  const request: Object = makeAuthJson(login)
+  const request = makeAuthJson(login)
   request.data = kit.server
   return authRequest(ai, serverMethod, serverPath, request).then(reply => {
     const newLoginTree = updateTree(
@@ -395,7 +395,7 @@ export function syncLogin(
 /**
  * Sets up a login v2 server authorization JSON.
  */
-export function makeAuthJson(login: LoginTree) {
+export function makeAuthJson(login: LoginTree): any {
   if (login.loginAuth != null) {
     return {
       loginId: login.loginId,

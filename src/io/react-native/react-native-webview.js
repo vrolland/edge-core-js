@@ -14,7 +14,7 @@ import { type WorkerApi } from './react-native-types.js'
 
 type Props = {
   debug?: boolean,
-  onError(e: Object): mixed,
+  onError(e: any): mixed,
   onLoad(nativeIo: EdgeNativeIo, root: WorkerApi): Promise<mixed>,
   nativeIo?: EdgeNativeIo
 }

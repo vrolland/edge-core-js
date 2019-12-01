@@ -45,7 +45,7 @@ function getObject(value: any): any {
   return value
 }
 
-function getJson(file: DiskletFile, fallback: Object = {}): Promise<any> {
+function getJson(file: DiskletFile, fallback: any = {}): Promise<any> {
   return file
     .getText()
     .then(text => JSON.parse(text))

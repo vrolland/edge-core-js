@@ -113,7 +113,8 @@ function pickQuote(
 /**
  * Ranks different error codes by priority.
  */
-function rankError(error: Object) {
+function rankError(error: any) {
+  if (error == null) return -1
   if (error.name === errorNames.InsufficientFundsError) return 5
   if (error.name === errorNames.PendingFundsError) return 5
   if (error.name === errorNames.SwapBelowLimitError) return 4
@@ -126,7 +127,7 @@ function rankError(error: Object) {
 /**
  * Picks the best error out of two choices.
  */
-function pickError(a: Object, b: Object): Object {
+function pickError(a: any, b: any): any {
   // Return the highest-ranked error:
   const diff = rankError(a) - rankError(b)
   if (diff > 0) return a
