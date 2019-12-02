@@ -19,8 +19,6 @@
     "@typescript-eslint/require-array-sort-compare": "off",
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/strict-boolean-expressions": "off",
-    "flowtype/array-style-complex-type": ["error", "verbose"],
-    "flowtype/array-style-simple-type": ["error", "shorthand"],
 
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/promise-function-async": "off",
