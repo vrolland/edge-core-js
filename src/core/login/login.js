@@ -155,7 +155,7 @@ function makeLoginTreeInner(
   stash: LoginStash,
   loginKey: Uint8Array
 ): LoginTree {
-  const login = {}
+  const login: LoginTree = {}
 
   if (stash.username != null) {
     login.username = stash.username

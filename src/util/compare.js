@@ -68,7 +68,7 @@ function compareObjects(a: any, b: any, type: string) {
 /**
  * Returns true if two Javascript values are equal in value.
  */
-export function compare<A, B>(a: A, b: B): boolean {
+export function compare(a: any, b: any): boolean {
   if (a === b) return true
 
   // Fast path for primitives:

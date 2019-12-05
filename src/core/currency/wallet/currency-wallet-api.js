@@ -567,9 +567,9 @@ export function combineTxWithFile(
   if (file && file.creationDate < out.date) out.date = file.creationDate
   out.metadata = merged.metadata
   if (
-    merged.metadata &&
-    merged.metadata.exchangeAmount &&
-    merged.metadata.exchangeAmount[walletFiat]
+    out.metadata != null &&
+    out.metadata.exchangeAmount && // exchangeAmount is not in the types!?
+    out.metadata.exchangeAmount[walletFiat]
   ) {
     out.metadata.amountFiat = merged.metadata.exchangeAmount[walletFiat]
     if (out.metadata && out.metadata.amountFiat.toString().includes('e')) {

@@ -309,7 +309,7 @@ export function makeAccountApi(ai: ApiInput, accountId: string): EdgeAccount {
     },
     async waitForCurrencyWallet(walletId: string): Promise<EdgeCurrencyWallet> {
       return new Promise(resolve => {
-        const f = currencyWallets => {
+        const f = () => {
           const wallet = this.currencyWallets[walletId]
           if (wallet != null) {
             resolve(wallet)
