@@ -1,6 +1,6 @@
 // @flow
 
-import { type DiskletFile, mapFiles } from 'disklet'
+import { type DiskletFile, type DiskletFolder, mapFiles } from 'disklet'
 import { base16, base64 } from 'rfc4648'
 
 import {
@@ -27,7 +27,7 @@ type PluginSettingsFile = {
 /**
  * Returns true if `Object.assign(a, b)` would alter `a`.
  */
-function different(a, b) {
+function different(a: any, b: any): boolean {
   for (const key of Object.keys(b)) {
     if (a[key] !== b[key]) {
       return true
@@ -40,19 +40,19 @@ function different(a, b) {
  * Returns `value` if it is an object,
  * otherwise returns an empty fallback object.
  */
-function getObject(value) {
+function getObject(value: any): any {
   if (value == null && typeof value !== 'object') return {}
   return value
 }
 
-function getJson(file: DiskletFile, fallback: Object = {}) {
+function getJson(file: DiskletFile, fallback: Object = {}): Promise<any> {
   return file
     .getText()
     .then(text => JSON.parse(text))
     .catch(e => fallback)
 }
 
-function getJsonFiles(folder) {
+function getJsonFiles(folder: DiskletFolder): Promise<any[]> {
   return mapFiles(folder, (file, name) =>
     file
       .getText()
@@ -65,7 +65,7 @@ function getJsonFiles(folder) {
  * Loads the legacy wallet list from the account folder.
  */
 function loadWalletList(
-  folder
+  folder: DiskletFolder
 ): Promise<{
   walletInfos: EdgeWalletInfo[],
   walletStates: EdgeWalletStates
@@ -104,7 +104,7 @@ function loadWalletList(
 /**
  * Loads the modern key state list from the account folder.
  */
-function loadWalletStates(folder): Promise<EdgeWalletStates> {
+function loadWalletStates(folder: DiskletFolder): Promise<EdgeWalletStates> {
   return getJsonFiles(folder.folder('Keys')).then(files => {
     const keyStates = {}
 

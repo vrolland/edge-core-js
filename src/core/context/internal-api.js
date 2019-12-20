@@ -86,7 +86,10 @@ export class EdgeInternalStuff extends Bridgeable<{}> {
     return hashUsername(this._ai, username)
   }
 
-  async makeLobby(lobbyRequest: LobbyRequest, period: number = 1000) {
+  async makeLobby(
+    lobbyRequest: LobbyRequest,
+    period: number = 1000
+  ): Promise<EdgeLobby> {
     const lobby = await makeLobby(this._ai, lobbyRequest, period)
     return new EdgeLobby(lobby)
   }

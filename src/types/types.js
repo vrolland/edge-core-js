@@ -1101,7 +1101,10 @@ export type EdgeContext = {
   changePaused(
     paused: boolean,
     opts?: { secondsDelay?: number }
-  ): Promise<mixed>
+  ): Promise<mixed>,
+
+  // Deprecated API's:
+  pinExists(username: string): Promise<boolean>
 }
 
 // ---------------------------------------------------------------------

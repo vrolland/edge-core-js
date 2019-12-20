@@ -101,7 +101,7 @@ export function syncRepo(
     file.getText().then(text => ({ file, name, json: JSON.parse(text) }))
   ).then(ourChanges => {
     // If we have local changes, we need to bundle those:
-    const request = {}
+    const request: { changes?: { [path: string]: any } } = {}
     if (ourChanges.length > 0) {
       request.changes = {}
       for (const change of ourChanges) {

@@ -31,13 +31,14 @@ export type ScryptOutput = {
  * Prevents a function from running in parallel.
  * The currently-running operation must finish before the new one starts.
  */
-function serialize(f) {
+function serialize<F: Function>(f: F): F {
   let nextTask = Promise.resolve()
-  return function serialize(...rest) {
+  const flowHack: any = function serialize(...rest: any[]) {
     const onDone = () => f.apply(this, rest)
     nextTask = nextTask.then(onDone, onDone)
     return nextTask
   }
+  return flowHack
 }
 
 export function calcSnrpForTarget(

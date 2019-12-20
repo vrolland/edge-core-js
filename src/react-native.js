@@ -118,7 +118,7 @@ export async function fetchLoginMessages(
 
     return response.json().then(json => {
       const reply = parseReply(json)
-      const out = {}
+      const out: EdgeLoginMessages = {}
       for (const message of reply) {
         const username = loginMap[message.loginId]
         if (username) out[username] = message

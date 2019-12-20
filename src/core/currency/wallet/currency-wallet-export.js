@@ -99,7 +99,7 @@ export function exportTransactionsToQBOInner(
   const STMTTRN = []
   const now = makeOfxDate(dateNow / 1000)
 
-  for (const edgeTx: EdgeTransaction of edgeTransactions) {
+  for (const edgeTx of edgeTransactions) {
     const TRNAMT: string = denom
       ? div(edgeTx.nativeAmount, denom, 18)
       : edgeTx.nativeAmount
@@ -220,7 +220,7 @@ export async function exportTransactionsToCSVInner(
     const networkFeeField = 'AMT_NETWORK_FEES_' + currencyCode
     const items = []
 
-    for (const edgeTx: EdgeTransaction of edgeTransactions) {
+    for (const edgeTx of edgeTransactions) {
       const amount: string = denom
         ? div(edgeTx.nativeAmount, denom, 18)
         : edgeTx.nativeAmount

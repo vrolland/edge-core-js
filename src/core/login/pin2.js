@@ -27,7 +27,7 @@ function pin2Id(pin2Key: Uint8Array, username: string) {
   return hmacSha256(data, pin2Key)
 }
 
-function pin2Auth(pin2Key, pin) {
+function pin2Auth(pin2Key: Uint8Array, pin: string) {
   return hmacSha256(utf8.parse(pin), pin2Key)
 }
 

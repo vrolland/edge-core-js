@@ -207,7 +207,10 @@ export function makeContextApi(ai: ApiInput) {
       return ai.props.state.paused
     },
 
-    async changePaused(paused: boolean, opts = {}): Promise<mixed> {
+    async changePaused(
+      paused: boolean,
+      opts: { secondsDelay?: number } = {}
+    ): Promise<mixed> {
       const { secondsDelay = 0 } = opts
 
       // If a timer is already running, stop that:

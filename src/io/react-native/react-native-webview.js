@@ -20,8 +20,8 @@ type Props = {
 }
 
 type WebViewCallbacks = {
-  handleMessage: Function,
-  setRef: Function
+  handleMessage: (event: any) => void,
+  setRef: (element: WebView) => void
 }
 
 /**
@@ -41,8 +41,8 @@ function makeOuterWebViewBridge<Root>(
   let gatedRoot: Root | void
   let webview: WebView | void
 
-  // Gate the root object on the webview being ready:
-  const tryReleasingRoot = () => {
+  // Gate the root object on the WebView being ready:
+  const tryReleasingRoot = (): void => {
     if (gatedRoot != null && webview != null) {
       onRoot(gatedRoot)
       gatedRoot = undefined
@@ -50,7 +50,7 @@ function makeOuterWebViewBridge<Root>(
   }
 
   // Feed incoming messages into the YAOB bridge (if any):
-  const handleMessage = event => {
+  const handleMessage = (event: any): void => {
     const message = JSON.parse(event.nativeEvent.data)
     if (debug != null) console.info(`${debug} →`, message)
 
@@ -95,8 +95,8 @@ function makeOuterWebViewBridge<Root>(
     bridge.handleMessage(message)
   }
 
-  // Listen for the webview component to mount:
-  const setRef = element => {
+  // Listen for the WebView component to mount:
+  const setRef = (element: WebView): void => {
     webview = element
     tryReleasingRoot()
   }
@@ -116,7 +116,7 @@ export class EdgeCoreBridge extends Component<Props> {
 
     // Set up the native IO objects:
     const nativeIoPromise = makeClientIo().then(coreIo => {
-      const bridgedIo = { 'edge-core': coreIo }
+      const bridgedIo: EdgeNativeIo = { 'edge-core': coreIo }
       for (const n in nativeIo) {
         bridgedIo[n] = bridgifyObject(nativeIo[n])
       }

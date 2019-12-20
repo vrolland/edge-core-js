@@ -27,7 +27,13 @@ export function findAppLogin(loginTree: LoginTree, appId: string): LoginTree {
 /**
  * Creates a child login under the provided login, with the given appId.
  */
-function createChildLogin(ai, loginTree, login, appId, wantRepo = true) {
+function createChildLogin(
+  ai: ApiInput,
+  loginTree: LoginTree,
+  login: LoginTree,
+  appId: string,
+  wantRepo: boolean = true
+) {
   const { username } = loginTree
   checkLogin(login)
   if (!username) throw new Error('Cannot create child: missing username')

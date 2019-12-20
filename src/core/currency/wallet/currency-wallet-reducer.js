@@ -81,7 +81,7 @@ export type CurrencyWalletNext = {
 }
 
 const currencyWallet = buildReducer({
-  accountId(state, action, next: CurrencyWalletNext): string {
+  accountId(state, action: RootAction, next: CurrencyWalletNext): string {
     if (state) return state
     for (const accountId in next.root.accounts) {
       const account = next.root.accounts[accountId]
@@ -102,7 +102,11 @@ const currencyWallet = buildReducer({
     }
   ),
 
-  currencyInfo(state, action, next: CurrencyWalletNext): EdgeCurrencyInfo {
+  currencyInfo(
+    state,
+    action: RootAction,
+    next: CurrencyWalletNext
+  ): EdgeCurrencyInfo {
     if (state) return state
     return getCurrencyPlugin(next.root, next.self.walletInfo.type).currencyInfo
   },
@@ -272,7 +276,7 @@ const currencyWallet = buildReducer({
     return state
   },
 
-  walletInfo(state, action, next: CurrencyWalletNext) {
+  walletInfo(state, action: RootAction, next: CurrencyWalletNext) {
     return next.root.login.walletInfos[next.id]
   },
 

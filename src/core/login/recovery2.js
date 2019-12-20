@@ -22,7 +22,7 @@ function recovery2Id(recovery2Key: Uint8Array, username: string) {
   return hmacSha256(data, recovery2Key)
 }
 
-function recovery2Auth(recovery2Key, answers) {
+function recovery2Auth(recovery2Key: Uint8Array, answers: string[]) {
   return answers.map(answer => {
     const data = utf8.parse(answer)
     return base64.stringify(hmacSha256(data, recovery2Key))
@@ -191,8 +191,6 @@ export function makeRecovery2Kit(
   }
 }
 
-export const listRecoveryQuestionChoices = function listRecoveryQuestionChoices(
-  ai: ApiInput
-) {
+export function listRecoveryQuestionChoices(ai: ApiInput): Promise<string[]> {
   return authRequest(ai, 'POST', '/v1/questions', {})
 }
