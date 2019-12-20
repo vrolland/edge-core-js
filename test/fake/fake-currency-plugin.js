@@ -79,7 +79,7 @@ class FakeCurrencyEngine {
     this._updateState(this.state)
   }
 
-  _updateState(settings: State): mixed {
+  _updateState(settings: State): void {
     const state = this.state
     const {
       onAddressesChecked = nop,
@@ -141,12 +141,12 @@ class FakeCurrencyEngine {
         }
       }
 
-      if (changes.length) onTransactionsChanged(changes)
+      if (changes.length > 0) onTransactionsChanged(changes)
     }
   }
 
   async changeUserSettings(settings: JsonObject): Promise<mixed> {
-    return this._updateState(settings)
+    await this._updateState(settings)
   }
 
   // Keys:
@@ -235,6 +235,7 @@ class FakeCurrencyEngine {
   }
 
   addGapLimitAddresses(addresses: string[]): void {}
+
   isAddressUsed(address: string): boolean {
     return address === 'fakeaddress'
   }
