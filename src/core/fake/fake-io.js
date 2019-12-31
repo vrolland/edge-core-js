@@ -9,9 +9,9 @@ import { scrypt } from '../../util/crypto/scrypt.js'
  * Silences all logging.
  */
 export const fakeConsole = {
-  info: () => {},
-  warn: () => {},
-  error: () => {}
+  info: () => undefined,
+  warn: () => undefined,
+  error: () => undefined
 }
 
 /**
