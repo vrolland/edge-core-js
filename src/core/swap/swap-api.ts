@@ -66,7 +66,7 @@ export async function fetchSwapQuote(
       if (errors.length < 1) throw new Error('No swap providers enabled')
       log(
         `All ${promises.length} swap quotes rejected: ${JSON.stringify(
-          errors.map(error => {
+          errors.map((error: any) => {
             const { name, message } = error
             return { name, message, ...error }
           }),

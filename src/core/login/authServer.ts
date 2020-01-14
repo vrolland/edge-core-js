@@ -78,7 +78,7 @@ export function authRequest(
     response => {
       const time = Date.now() - start
       log(`${method} ${fullUri} returned ${response.status} in ${time}ms`)
-      return response.json().then(parseReply, jsonError => {
+      return response.json().then(parseReply, () => {
         throw new Error('Non-JSON reply, HTTP status ' + response.status)
       })
     },
