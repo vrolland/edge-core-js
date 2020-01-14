@@ -31,16 +31,16 @@ export function MakeEdgeContext(props: {
   onLoad: (context: EdgeContext) => mixed,
   options: EdgeContextOptions
 }) {
-  const { onError = onErrorDefault, onLoad } = props
+  const { debug, nativeIo, onError = onErrorDefault, onLoad } = props
   if (onLoad == null) {
     throw new TypeError('No onLoad passed to MakeEdgeContext')
   }
 
   return (
     <EdgeCoreBridge
-      debug={props.debug}
-      nativeIo={props.nativeIo}
-      onError={error => onError(error)}
+      debug={debug}
+      nativeIo={nativeIo}
+      onError={onError}
       onLoad={(nativeIo, root) =>
         root.makeEdgeContext(nativeIo, props.options).then(onLoad)
       }
@@ -55,16 +55,16 @@ export function MakeFakeEdgeWorld(props: {
   onLoad: (world: EdgeFakeWorld) => mixed,
   users?: EdgeFakeUser[]
 }) {
-  const { onError = onErrorDefault, onLoad } = props
+  const { debug, nativeIo, onError = onErrorDefault, onLoad } = props
   if (onLoad == null) {
     throw new TypeError('No onLoad passed to MakeFakeEdgeWorld')
   }
 
   return (
     <EdgeCoreBridge
-      debug={props.debug}
-      nativeIo={props.nativeIo}
-      onError={error => onError(error)}
+      debug={debug}
+      nativeIo={nativeIo}
+      onError={onError}
       onLoad={(nativeIo, root) =>
         root.makeFakeEdgeWorld(nativeIo, props.users).then(onLoad)
       }
