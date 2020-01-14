@@ -3,7 +3,7 @@ import '../../client-side'
 import React, { Component } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 import RNFS from 'react-native-fs'
-import { WebView } from 'react-native-webview'
+import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { Bridge, bridgifyObject, onMethod } from 'yaob'
 
 import { EdgeNativeIo } from '../../types/types'
@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface WebViewCallbacks {
-  handleMessage: (event: any) => void
+  handleMessage: (event: WebViewMessageEvent) => void
   setRef: (element: WebView) => void
 }
 
@@ -48,7 +48,7 @@ function makeOuterWebViewBridge<Root>(
   }
 
   // Feed incoming messages into the YAOB bridge (if any):
-  const handleMessage = (event: any): void => {
+  const handleMessage = (event: WebViewMessageEvent): void => {
     const message = JSON.parse(event.nativeEvent.data)
     if (debug != null) console.info(`${debug} →`, message)
 
@@ -57,7 +57,7 @@ function makeOuterWebViewBridge<Root>(
     if (
       bridge != null &&
       message.events != null &&
-      message.events.find(event => event.localId === 0)
+      message.events.find((event: { localId: number }) => event.localId === 0)
     ) {
       bridge.close(new Error('edge-core: The WebView has been unmounted.'))
       bridge = undefined
@@ -83,6 +83,7 @@ function makeOuterWebViewBridge<Root>(
 
       // Use our inside knowledge of YAOB to directly
       // subscribe to the root object appearing:
+      // @ts-ignore bridge._state
       onMethod.call(bridge._state, 'root', root => {
         gatedRoot = root
         tryReleasingRoot()

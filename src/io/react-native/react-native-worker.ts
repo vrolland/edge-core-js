@@ -39,7 +39,7 @@ global.addEdgeCorePlugins = addEdgeCorePlugins
 global.lockEdgeCorePlugins = lockEdgeCorePlugins
 
 function makeIo(nativeIo: EdgeNativeIo): EdgeIo {
-  const clientIo: ClientIo = nativeIo['edge-core']
+  const clientIo: ClientIo = nativeIo['edge-core'] as any
   const { console, disklet, entropy, scrypt } = clientIo
   const csprng = new HmacDRBG({
     hash: hashjs.sha256,

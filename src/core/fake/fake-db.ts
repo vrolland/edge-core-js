@@ -158,11 +158,11 @@ export class FakeDb {
   }
 
   setupFakeUser(user: EdgeFakeUser): void {
-    this.setupFakeLogin(user.server, null)
+    this.setupFakeLogin(user.server as any, null)
 
     // Create fake repos:
     for (const syncKey of Object.keys(user.repos)) {
-      this.repos[syncKey] = { ...user.repos[syncKey] }
+      this.repos[syncKey] = { ...user.repos[syncKey] } as any
     }
   }
 

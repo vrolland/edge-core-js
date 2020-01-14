@@ -23,7 +23,7 @@ function assign(out: any) {
 /**
  * Array.fill
  */
-function fill(value: any, start?: number, end?: number) {
+function fill(this: any[], value: any, start?: number, end?: number) {
   const length = this.length
   function clamp(endpoint: number) {
     return endpoint < 0
@@ -43,6 +43,7 @@ function fill(value: any, start?: number, end?: number) {
  * Array.find
  */
 function find(
+  this: any[],
   test: (value: any, i: number, array: any[]) => boolean,
   testThis?: any
 ) {
@@ -57,7 +58,7 @@ function find(
 /**
  * Array.includes
  */
-function includes(target: any) {
+function includes(this: any[], target: any) {
   return Array.prototype.indexOf.call(this, target) >= 0
 }
 

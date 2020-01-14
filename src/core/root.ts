@@ -11,7 +11,7 @@ import {
 import { RootAction } from './actions'
 import { makeLog } from './log/log'
 import { watchPlugins } from './plugins/plugins-actions'
-import { rootPixie, RootProps } from './root-pixie'
+import { RootOutput, rootPixie, RootProps } from './root-pixie'
 import { reducer, RootState } from './root-reducer'
 
 let allContexts: EdgeContext[] = []
@@ -57,7 +57,7 @@ export async function makeContext(
   }
 
   // Start Redux:
-  const enhancers: StoreEnhancer<RootState, RootAction> = composeEnhancers()
+  const enhancers: StoreEnhancer<RootState> = composeEnhancers()
   const redux = createStore(reducer, enhancers)
   redux.dispatch({
     type: 'INIT',
@@ -69,7 +69,7 @@ export async function makeContext(
 
   // Start the pixie tree:
   const log = makeLog(io, 'edge-core')
-  const mirror = { output: {} }
+  const mirror: { output: RootOutput } = { output: {} as any }
   const closePixie = attachPixie(
     redux,
     filterPixie(

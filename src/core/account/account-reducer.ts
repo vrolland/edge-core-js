@@ -265,7 +265,9 @@ export const accountReducer = filterReducer(
   (action: RootAction, next: AccountNext) => {
     if (
       /^ACCOUNT_/.test(action.type) &&
-      action.payload != null &&
+      'payload' in action &&
+      typeof action.payload === 'object' &&
+      'accountId' in action.payload &&
       action.payload.accountId === next.id
     ) {
       return action

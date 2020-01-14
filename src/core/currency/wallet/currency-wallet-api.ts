@@ -534,6 +534,7 @@ export function combineTxWithFile(
     txid: tx.txid,
     otherParams: { ...tx.otherParams, unfilteredIndex },
 
+    // @ts-ignore legacy property
     amountSatoshi: Number(tx.nativeAmount[currencyCode]),
     nativeAmount: tx.nativeAmount[currencyCode],
     networkFee: tx.networkFee[currencyCode],
@@ -566,7 +567,9 @@ export function combineTxWithFile(
   out.metadata = merged.metadata
   if (
     out.metadata != null &&
+    // @ts-ignore
     out.metadata.exchangeAmount && // exchangeAmount is not in the types!?
+    // @ts-ignore
     out.metadata.exchangeAmount[walletFiat]
   ) {
     out.metadata.amountFiat = merged.metadata.exchangeAmount[walletFiat]

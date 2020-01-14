@@ -63,7 +63,7 @@ export function makeCreateKit(
   }
 
   // Set up login methods:
-  const dummyKit: LoginKit = {}
+  const dummyKit: LoginKit = {} as any
   const parentBox =
     parentLogin != null
       ? encrypt(io, loginKey, parentLogin.loginKey)
