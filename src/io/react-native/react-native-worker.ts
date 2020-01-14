@@ -20,8 +20,11 @@ import {
 import { makeFetchResponse } from '../../util/http/http-to-fetch'
 import { ClientIo, WorkerApi } from './react-native-types'
 
-const body = document.body
-if (body != null && /debug=true/.test(window.location)) {
+// @ts-ignore `window` doesn't exist in React Native
+const global: any = typeof window !== 'undefined' ? window : {}
+
+const body = global.document.body
+if (body != null && /debug=true/.test(global.location.search)) {
   const update = () => {
     const wave = Math.abs(((Date.now() / 2000) % 2) - 1)
     const color = 0x40 + 0x80 * wave
@@ -32,8 +35,8 @@ if (body != null && /debug=true/.test(window.location)) {
   update()
 }
 
-window.addEdgeCorePlugins = addEdgeCorePlugins
-window.lockEdgeCorePlugins = lockEdgeCorePlugins
+global.addEdgeCorePlugins = addEdgeCorePlugins
+global.lockEdgeCorePlugins = lockEdgeCorePlugins
 
 function makeIo(nativeIo: EdgeNativeIo): EdgeIo {
   const clientIo: ClientIo = nativeIo['edge-core']
@@ -52,7 +55,7 @@ function makeIo(nativeIo: EdgeNativeIo): EdgeIo {
 
     // Networking:
     fetch(uri: string, opts?: EdgeFetchOptions): Promise<EdgeFetchResponse> {
-      return window.fetch(uri, opts)
+      return global.fetch(uri, opts)
     },
 
     fetchCors(
@@ -62,7 +65,7 @@ function makeIo(nativeIo: EdgeNativeIo): EdgeIo {
       return clientIo.fetchCors(uri, opts).then(makeFetchResponse)
     },
 
-    WebSocket: window.WebSocket
+    WebSocket: global.WebSocket
   }
 }
 
@@ -80,26 +83,26 @@ const workerApi: WorkerApi = bridgifyObject({
  * Legacy WebView support.
  */
 function oldSendRoot() {
-  if (window.originalPostMessage != null) {
-    const reactPostMessage = window.postMessage
-    window.postMessage = window.originalPostMessage
-    window.bridge = new Bridge({
+  if (global.originalPostMessage != null) {
+    const reactPostMessage = global.postMessage
+    global.postMessage = global.originalPostMessage
+    global.bridge = new Bridge({
       sendMessage: message => reactPostMessage(JSON.stringify(message))
     })
-    window.bridge.sendRoot(workerApi)
+    global.bridge.sendRoot(workerApi)
   } else {
     setTimeout(oldSendRoot, 100)
   }
 }
 
 // Start the object bridge:
-if (window.ReactNativeWebView != null) {
-  window.bridge = new Bridge({
+if (global.ReactNativeWebView != null) {
+  global.bridge = new Bridge({
     sendMessage(message) {
-      window.ReactNativeWebView.postMessage(JSON.stringify(message))
+      global.ReactNativeWebView.postMessage(JSON.stringify(message))
     }
   })
-  window.bridge.sendRoot(workerApi)
+  global.bridge.sendRoot(workerApi)
 } else {
   oldSendRoot()
 }
