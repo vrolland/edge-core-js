@@ -20,7 +20,7 @@ export const exchange: TamePixie<RootProps> = filterPixie(
       ]
     }
 
-    function dispatchPairs(pairs: ExchangePair[], source: string) {
+    function dispatchPairs(pairs: ExchangePair[], source: string): void {
       input.props.log(`Exchange rates updated (${source})`)
       if (pairs.length > 0) {
         input.props.dispatch({
@@ -30,7 +30,7 @@ export const exchange: TamePixie<RootProps> = filterPixie(
       }
     }
 
-    function doFetch() {
+    function doFetch(): void {
       // Quit early if there is nothing to do:
       const pluginNames = Object.keys(input.props.state.plugins.rate)
       if (pluginNames.length === 0) return
@@ -40,7 +40,7 @@ export const exchange: TamePixie<RootProps> = filterPixie(
       // Gather pairs for up to five seconds, then send what we have:
       let wait: boolean = true
       let waitingPairs: ExchangePair[] = []
-      function sendWaitingPairs(done?: boolean) {
+      function sendWaitingPairs(done?: boolean): void {
         wait = false
         dispatchPairs(waitingPairs, done ? 'complete' : 'some pending')
       }

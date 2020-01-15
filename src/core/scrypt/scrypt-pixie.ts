@@ -115,7 +115,7 @@ export const scrypt: TamePixie<RootProps> = combinePixies({
     const { io, log } = input.props
     let benchmark: Promise<number>
 
-    function makeSnrp(targetMs: number) {
+    function makeSnrp(targetMs: number): Promise<JsonSnrp> {
       // Run the benchmark if needed:
       if (benchmark == null) {
         benchmark = input.props.output.scrypt

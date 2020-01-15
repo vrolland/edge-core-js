@@ -22,7 +22,7 @@ import { FakeDb } from './fake-db'
 import { fakeConsole } from './fake-io'
 import { makeFakeServer } from './fake-server'
 
-async function saveUser(io: EdgeIo, user: EdgeFakeUser) {
+async function saveUser(io: EdgeIo, user: EdgeFakeUser): Promise<void> {
   const { loginId, loginKey, username } = user
   // JsonObject doesn't match LoginReply:
   const server: any = user.server

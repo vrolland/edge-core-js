@@ -8,15 +8,15 @@ import { ApiInput } from '../root-pixie'
 import { authRequest } from './authServer'
 import { applyKits, applyLoginReply, makeLoginTree, searchTree } from './login'
 import { fixUsername, getStash } from './login-selectors'
-import { LoginKit, LoginStash, LoginTree } from './login-types'
+import { LoginKit, LoginReply, LoginStash, LoginTree } from './login-types'
 import { saveStash } from './loginStore'
 
-function pin2Id(pin2Key: Uint8Array, username: string) {
+function pin2Id(pin2Key: Uint8Array, username: string): Uint8Array {
   const data = utf8.parse(fixUsername(username))
   return hmacSha256(data, pin2Key)
 }
 
-function pin2Auth(pin2Key: Uint8Array, pin: string) {
+function pin2Auth(pin2Key: Uint8Array, pin: string): Uint8Array {
   return hmacSha256(utf8.parse(pin), pin2Key)
 }
 
@@ -30,7 +30,7 @@ async function fetchLoginKey(
   username: string,
   pin: string,
   otp: string | undefined
-) {
+): Promise<{ loginKey: Uint8Array; loginReply: LoginReply }> {
   const request = {
     pin2Id: base64.stringify(pin2Id(pin2Key, username)),
     pin2Auth: base64.stringify(pin2Auth(pin2Key, pin)),
@@ -49,7 +49,10 @@ async function fetchLoginKey(
 /**
  * Returns a copy of the PIN login key if one exists on the local device.
  */
-export function getPin2Key(stashTree: LoginStash, appId: string) {
+export function getPin2Key(
+  stashTree: LoginStash,
+  appId: string
+): { pin2Key?: Uint8Array; appId?: string } {
   const stash =
     stashTree.pin2Key != null
       ? stashTree
@@ -69,7 +72,7 @@ export async function loginPin2(
   username: string,
   pin: string,
   otpKey: string | undefined
-) {
+): Promise<LoginTree> {
   let stashTree = getStash(ai, username)
   const { pin2Key, appId: appIdFound } = getPin2Key(stashTree, appId)
   if (pin2Key == null) {
@@ -95,7 +98,7 @@ export async function changePin(
   accountId: string,
   pin: string | undefined,
   enableLogin: boolean | undefined
-) {
+): Promise<void> {
   const { loginTree, username } = ai.props.state.accounts[accountId]
 
   // Figure out defaults:
@@ -123,7 +126,11 @@ export async function changePin(
 /**
  * Returns true if the given pin is correct.
  */
-export async function checkPin2(ai: ApiInput, login: LoginTree, pin: string) {
+export async function checkPin2(
+  ai: ApiInput,
+  login: LoginTree,
+  pin: string
+): Promise<boolean> {
   const { appId, username } = login
   if (!username) return false
 
@@ -138,7 +145,10 @@ export async function checkPin2(ai: ApiInput, login: LoginTree, pin: string) {
   )
 }
 
-export async function deletePin(ai: ApiInput, accountId: string) {
+export async function deletePin(
+  ai: ApiInput,
+  accountId: string
+): Promise<void> {
   const { loginTree } = ai.props.state.accounts[accountId]
 
   const kits = makeDeletePin2Kits(loginTree)

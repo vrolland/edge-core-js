@@ -275,7 +275,10 @@ export async function changeSwapSettings(
 /**
  * Loads the settings for all the currency plugins within an account.
  */
-export async function reloadPluginSettings(ai: ApiInput, accountId: string) {
+export async function reloadPluginSettings(
+  ai: ApiInput,
+  accountId: string
+): Promise<void> {
   const { accountWalletInfo } = ai.props.state.accounts[accountId]
   const file = getStorageWalletFolder(
     ai.props.state,

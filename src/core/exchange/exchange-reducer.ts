@@ -29,7 +29,7 @@ function addRoute(
   from: string,
   to: string,
   pair: number
-) {
+): void {
   if (!routes[from]) routes[from] = {}
   if (!routes[from][to]) routes[from][to] = []
   routes[from][to].push(pair)

@@ -7,12 +7,12 @@ import { makeSnrp, scrypt, userIdSnrp } from '../scrypt/scrypt-selectors'
 import { authRequest } from './authServer'
 import { applyKit, applyLoginReply, makeLoginTree, syncLogin } from './login'
 import { fixUsername, getStash, hashUsername } from './login-selectors'
-import { LoginKit, LoginStash, LoginTree } from './login-types'
+import { LoginKit, LoginReply, LoginStash, LoginTree } from './login-types'
 import { saveStash } from './loginStore'
 
 export const passwordAuthSnrp = userIdSnrp
 
-function makeHashInput(username: string, password: string) {
+function makeHashInput(username: string, password: string): string {
   return fixUsername(username) + password
 }
 
@@ -24,7 +24,7 @@ async function extractLoginKey(
   stash: LoginStash,
   username: string,
   password: string
-) {
+): Promise<Uint8Array> {
   const { passwordBox, passwordKeySnrp } = stash
   if (passwordBox == null || passwordKeySnrp == null) {
     throw new Error('Missing data for offline password login')
@@ -42,7 +42,7 @@ async function fetchLoginKey(
   username: string,
   password: string,
   otp: string | undefined
-) {
+): Promise<{ loginKey: Uint8Array; loginReply: LoginReply }> {
   const up = makeHashInput(username, password)
 
   const [userId, passwordAuth] = await Promise.all([
@@ -76,7 +76,7 @@ export async function loginPassword(
   username: string,
   password: string,
   otpKey: string | undefined
-) {
+): Promise<LoginTree> {
   const { log } = ai.props
   let stashTree = getStash(ai, username)
 
@@ -107,7 +107,7 @@ export async function changePassword(
   ai: ApiInput,
   accountId: string,
   password: string
-) {
+): Promise<void> {
   const { loginTree, username } = ai.props.state.accounts[accountId]
 
   const kit = await makePasswordKit(ai, loginTree, username, password)
@@ -121,7 +121,7 @@ export async function checkPassword(
   ai: ApiInput,
   login: LoginTree,
   password: string
-) {
+): Promise<boolean> {
   const { username, passwordAuth } = login
   if (!username || !passwordAuth) return false
 
@@ -137,7 +137,10 @@ export async function checkPassword(
   return true
 }
 
-export async function deletePassword(ai: ApiInput, accountId: string) {
+export async function deletePassword(
+  ai: ApiInput,
+  accountId: string
+): Promise<void> {
   const { loginTree } = ai.props.state.accounts[accountId]
 
   const kit: LoginKit = {

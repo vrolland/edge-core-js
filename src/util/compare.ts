@@ -13,7 +13,7 @@ const TYPED_ARRAYS: { [name: string]: boolean } = {
 /**
  * Compares two objects that are already known to have a common `[[Class]]`.
  */
-function compareObjects(a: any, b: any, type: string) {
+function compareObjects(a: any, b: any, type: string): boolean {
   // User-created objects:
   if (type === '[object Object]') {
     const proto = Object.getPrototypeOf(a)

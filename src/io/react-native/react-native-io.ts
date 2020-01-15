@@ -37,11 +37,11 @@ function fetchCors(
     const xhr = new XMLHttpRequest()
 
     // Event handlers:
-    function handleError() {
+    function handleError(): void {
       reject(new NetworkError(`Could not reach ${uri}`))
     }
 
-    function handleLoad() {
+    function handleLoad(): void {
       const headers = xhr.getAllResponseHeaders()
       resolve({
         body: xhr.response,

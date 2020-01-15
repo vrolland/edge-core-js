@@ -58,7 +58,7 @@ class EdgeLobby extends Bridgeable<
     return this._replies
   }
 
-  close() {
+  close(): void {
     this._unsubscribe()
     close(this)
   }
@@ -76,7 +76,7 @@ export class EdgeInternalStuff extends Bridgeable<{}> {
     this._ai = ai
   }
 
-  authRequest(method: string, path: string, body?: {}) {
+  authRequest(method: string, path: string, body?: {}): Promise<any> {
     return authRequest(this._ai, method, path, body)
   }
 
@@ -92,7 +92,7 @@ export class EdgeInternalStuff extends Bridgeable<{}> {
     return new EdgeLobby(lobby)
   }
 
-  fetchLobbyRequest(lobbyId: string) {
+  fetchLobbyRequest(lobbyId: string): Promise<LobbyRequest> {
     return fetchLobbyRequest(this._ai, lobbyId)
   }
 
@@ -100,7 +100,7 @@ export class EdgeInternalStuff extends Bridgeable<{}> {
     lobbyId: string,
     lobbyRequest: LobbyRequest,
     replyData: unknown
-  ) {
+  ): Promise<void> {
     return sendLobbyReply(this._ai, lobbyId, lobbyRequest, replyData)
   }
 

@@ -3,20 +3,20 @@ import jsoncsv from 'json-csv'
 
 import { EdgeTransaction } from '../../../types/types'
 
-function padZero(val: string) {
+function padZero(val: string): string {
   if (val.length === 1) {
     return '0' + val
   }
   return val
 }
 
-function escapeOFXString(str: string) {
+function escapeOFXString(str: string): string {
   str = str.replace(/&/g, '&amp;')
   str = str.replace(/>/g, '&gt;')
   return str.replace(/</g, '&lt;')
 }
 
-function exportOfxHeader(inputObj: any) {
+function exportOfxHeader(inputObj: any): string {
   let out = ''
   for (const key of Object.keys(inputObj)) {
     let element = inputObj[key]
@@ -30,7 +30,7 @@ function exportOfxHeader(inputObj: any) {
   return out
 }
 
-function exportOfxBody(inputObj: any) {
+function exportOfxBody(inputObj: any): string {
   let out = ''
   for (const key of Object.keys(inputObj)) {
     let element = inputObj[key]
@@ -54,7 +54,7 @@ function exportOfxBody(inputObj: any) {
   return out
 }
 
-function exportOfx(header: any, body: any) {
+function exportOfx(header: any, body: any): string {
   let out = exportOfxHeader(header) + '\n'
   out += '<OFX>\n'
   out += exportOfxBody(body)

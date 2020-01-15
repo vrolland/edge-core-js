@@ -59,7 +59,7 @@ export function fuzzyTimeout<T>(
       }
     }, timeoutMs)
 
-    function checkEnd() {
+    function checkEnd(): void {
       const allDone = results.length + failures.length === promises.length
       if (allDone && timer != null) {
         clearTimeout(timer)

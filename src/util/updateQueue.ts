@@ -13,12 +13,12 @@ interface UpdateQueue {
 const updateQueue: UpdateQueue[] = []
 let timeOut
 
-export function enableTestMode() {
+export function enableTestMode(): void {
   QUEUE_JOBS_PER_RUN = 99
   QUEUE_RUN_DELAY = 1
 }
 
-export function pushUpdate(update: UpdateQueue) {
+export function pushUpdate(update: UpdateQueue): void {
   if (!updateQueue.length) {
     startQueue()
   }
@@ -35,7 +35,7 @@ export function pushUpdate(update: UpdateQueue) {
   }
 }
 
-export function removeIdFromQueue(id: string) {
+export function removeIdFromQueue(id: string): void {
   for (let i = 0; i < updateQueue.length; i++) {
     const update = updateQueue[i]
     if (id === update.id) {
@@ -48,7 +48,7 @@ export function removeIdFromQueue(id: string) {
   }
 }
 
-function startQueue() {
+function startQueue(): void {
   timeOut = setTimeout(() => {
     const numJobs =
       QUEUE_JOBS_PER_RUN < updateQueue.length

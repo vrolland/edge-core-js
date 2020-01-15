@@ -70,7 +70,7 @@ export function getCurrencyTools(
  * Waits for the plugins to load,
  * then validates that all plugins are present.
  */
-export function waitForPlugins(ai: ApiInput) {
+export function waitForPlugins(ai: ApiInput): Promise<unknown> {
   return ai.waitFor(props => {
     const { init, locked } = props.state.plugins
     if (!locked) return

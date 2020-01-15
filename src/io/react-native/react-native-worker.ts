@@ -82,7 +82,7 @@ const workerApi: WorkerApi = bridgifyObject({
 /**
  * Legacy WebView support.
  */
-function oldSendRoot() {
+function oldSendRoot(): void {
   if (global.originalPostMessage != null) {
     const reactPostMessage = global.postMessage
     global.postMessage = global.originalPostMessage

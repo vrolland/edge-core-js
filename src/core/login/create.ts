@@ -20,7 +20,10 @@ export interface LoginCreateOpts {
 /**
  * Determines whether or not a username is available.
  */
-export function usernameAvailable(ai: ApiInput, username: string) {
+export function usernameAvailable(
+  ai: ApiInput,
+  username: string
+): Promise<boolean> {
   return hashUsername(ai, username).then(userId => {
     const request = {
       userId: base64.stringify(userId)

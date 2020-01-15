@@ -11,6 +11,11 @@ const syncServers = [
   'https://git4.edge.app'
 ]
 
+interface SyncReply {
+  changes?: { [path: string]: any }
+  hash?: string
+}
+
 /**
  * Fetches some resource from a sync server.
  */
@@ -20,7 +25,7 @@ export function syncRequest(
   method: string,
   uri: string,
   body: any
-) {
+): Promise<SyncReply> {
   return syncRequestInner(io, log, method, uri, body, 0)
 }
 
@@ -31,7 +36,7 @@ function syncRequestInner(
   path: string,
   body: any,
   serverIndex: number
-) {
+): Promise<SyncReply> {
   const opts: EdgeFetchOptions = {
     method: method,
     headers: {

@@ -10,7 +10,7 @@ import { applyKit, searchTree } from '../login/login'
 import { LoginTree } from '../login/login-types'
 import { ApiInput } from '../root-pixie'
 
-function checkLogin(login: LoginTree) {
+function checkLogin(login: LoginTree): void {
   if (login == null || login.loginKey == null) {
     throw new Error('Incomplete login')
   }
@@ -31,7 +31,7 @@ function createChildLogin(
   login: LoginTree,
   appId: string,
   wantRepo: boolean = true
-) {
+): Promise<LoginTree> {
   const { username } = loginTree
   checkLogin(login)
   if (!username) throw new Error('Cannot create child: missing username')
@@ -122,7 +122,10 @@ export async function makeAccount(
 /**
  * Waits for the account API to appear and returns it.
  */
-export function waitForAccount(ai: ApiInput, accountId: string) {
+export function waitForAccount(
+  ai: ApiInput,
+  accountId: string
+): Promise<EdgeAccount> {
   const out: any = ai.waitFor(props => {
     const selfState = props.state.accounts[accountId]
     if (selfState.loadFailure != null) throw selfState.loadFailure

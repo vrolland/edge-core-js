@@ -69,7 +69,7 @@ export function loadRepoStatus(
 export function saveChanges(
   disklet: Disklet,
   changes: { [path: string]: any }
-) {
+): Promise<unknown> {
   return Promise.all(
     Object.keys(changes).map(path => {
       const json = changes[path]

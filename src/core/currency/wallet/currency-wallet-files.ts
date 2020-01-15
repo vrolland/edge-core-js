@@ -182,7 +182,10 @@ export function setCurrencyWalletFiat(
 /**
  * Loads the wallet fiat currency file.
  */
-function loadFiatFile(input: CurrencyWalletInput, folder: DiskletFolder) {
+function loadFiatFile(
+  input: CurrencyWalletInput,
+  folder: DiskletFolder
+): Promise<void> {
   const walletId = input.props.id
   const { dispatch } = input.props
 
@@ -201,14 +204,16 @@ function loadFiatFile(input: CurrencyWalletInput, folder: DiskletFolder) {
         type: 'CURRENCY_WALLET_FIAT_CHANGED',
         payload: { fiatCurrencyCode, walletId }
       })
-      return fiatCurrencyCode
     })
 }
 
 /**
  * Loads the wallet name file.
  */
-function loadNameFile(input: CurrencyWalletInput, folder: DiskletFolder) {
+function loadNameFile(
+  input: CurrencyWalletInput,
+  folder: DiskletFolder
+): Promise<void> {
   const walletId = input.props.id
   const { dispatch } = input.props
 
@@ -223,7 +228,7 @@ function loadNameFile(input: CurrencyWalletInput, folder: DiskletFolder) {
       if (name != null) await renameCurrencyWallet(input, name)
       return name
     })
-    .then((name: string | null) =>
+    .then((name: string | null) => {
       dispatch({
         type: 'CURRENCY_WALLET_NAME_CHANGED',
         payload: {
@@ -231,7 +236,7 @@ function loadNameFile(input: CurrencyWalletInput, folder: DiskletFolder) {
           walletId
         }
       })
-    )
+    })
 }
 
 /**
@@ -451,7 +456,7 @@ export function setCurrencyWalletTxMetadata(
   currencyCode: string,
   metadata: any,
   fakeCallbacks: EdgeCurrencyEngineCallbacks
-) {
+): Promise<void> {
   const walletId = input.props.id
   const { dispatch, state } = input.props
 
@@ -505,7 +510,10 @@ export function setCurrencyWalletTxMetadata(
   })
 }
 
-export function setupNewTxMetadata(input: CurrencyWalletInput, tx: any) {
+export function setupNewTxMetadata(
+  input: CurrencyWalletInput,
+  tx: any
+): Promise<void> {
   const walletId = input.props.id
   const { dispatch, state } = input.props
 

@@ -45,6 +45,7 @@ import { ApiInput } from '../root-pixie'
 import { makeStorageWalletApi } from '../storage/storage-api'
 import { fetchSwapQuote } from '../swap/swap-api'
 import { changeWalletStates } from './account-files'
+import { AccountState } from './account-reducer'
 import { makeDataStoreApi, makePluginDataApi } from './data-store-api'
 import { makeLobbyApi } from './lobby-api'
 import { CurrencyConfig, SwapConfig } from './plugin-api'
@@ -53,7 +54,7 @@ import { CurrencyConfig, SwapConfig } from './plugin-api'
  * Creates an unwrapped account API object around an account state object.
  */
 export function makeAccountApi(ai: ApiInput, accountId: string): EdgeAccount {
-  const selfState = () => ai.props.state.accounts[accountId]
+  const selfState = (): AccountState => ai.props.state.accounts[accountId]
   const { accountWalletInfo, loginType, loginTree } = selfState()
   const { username } = loginTree
 
@@ -75,7 +76,7 @@ export function makeAccountApi(ai: ApiInput, accountId: string): EdgeAccount {
   const pluginData = makePluginDataApi(dataStore)
   const storageWalletApi = makeStorageWalletApi(ai, accountWalletInfo)
 
-  function lockdown() {
+  function lockdown(): void {
     if (ai.props.state.hideKeys) {
       throw new Error('Not available when `hideKeys` is enabled')
     }
@@ -307,15 +308,15 @@ export function makeAccountApi(ai: ApiInput, accountId: string): EdgeAccount {
     },
     async waitForCurrencyWallet(walletId: string): Promise<EdgeCurrencyWallet> {
       return new Promise(resolve => {
-        const f = () => {
-          const wallet = this.currencyWallets[walletId]
+        function check(): void {
+          const wallet = out.currencyWallets[walletId]
           if (wallet != null) {
             resolve(wallet)
             unsubscribe()
           }
         }
-        const unsubscribe = this.watch('currencyWallets', f)
-        f()
+        const unsubscribe = out.watch('currencyWallets', check)
+        check()
       })
     },
 

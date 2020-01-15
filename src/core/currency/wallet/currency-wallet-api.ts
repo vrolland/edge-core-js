@@ -59,7 +59,7 @@ export function makeCurrencyWalletApi(
   plugin: EdgeCurrencyPlugin,
   engine: EdgeCurrencyEngine,
   publicWalletInfo: EdgeWalletInfo
-) {
+): EdgeCurrencyWallet {
   const ai: ApiInput = input as any // Safe, since input extends ApiInput
   const { walletInfo } = input.props.selfState
 
@@ -73,7 +73,7 @@ export function makeCurrencyWalletApi(
     bridgifyObject(otherMethods)
   }
 
-  function lockdown() {
+  function lockdown(): void {
     if (ai.props.state.hideKeys) {
       throw new Error('Not available when `hideKeys` is enabled')
     }
@@ -495,7 +495,7 @@ export function makeCurrencyWalletApi(
   return out
 }
 
-function fixMetadata(metadata: EdgeMetadata, fiat: string) {
+function fixMetadata(metadata: EdgeMetadata, fiat: string): EdgeMetadata {
   const out = filterObject(metadata, [
     'bizId',
     'category',

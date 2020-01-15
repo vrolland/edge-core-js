@@ -34,11 +34,12 @@ function cloneNode<Node extends {}, Output>(
  * Returns the login that satisfies the given predicate,
  * or undefined if nothing matches.
  */
-export function searchTree(node: any, predicate: (node: any) => boolean) {
+export function searchTree<T>(node: T, predicate: (node: any) => boolean): T {
   if (predicate(node)) return node
 
-  if (node.children != null) {
-    for (const child of node.children) {
+  const { children } = node as any
+  if (children != null) {
+    for (const child of children) {
       const out = searchTree(child, predicate)
       if (out != null) return out
     }
@@ -71,7 +72,7 @@ function applyLoginReplyInner(
   stash: LoginStash,
   loginKey: Uint8Array,
   loginReply: LoginReply
-) {
+): LoginStash {
   // Copy common items:
   const out: LoginStash = filterObject(loginReply, [
     'appId',
@@ -276,7 +277,10 @@ export function makeLoginTree(
  * Prepares a login stash for edge login,
  * stripping out any information that the target app is not allowed to see.
  */
-export function sanitizeLoginStash(stashTree: LoginStash, appId: string) {
+export function sanitizeLoginStash(
+  stashTree: LoginStash,
+  appId: string
+): LoginStash {
   return updateTree(
     stashTree,
     stash => stash.appId === appId,
