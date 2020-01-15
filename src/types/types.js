@@ -41,6 +41,18 @@ export type EdgePluginMap<Value> = {
   [pluginName: string]: Value
 }
 
+type ArrayBufferView =
+  | Int8Array
+  | Int16Array
+  | Int32Array
+  | Uint8Array
+  | Uint16Array
+  | Uint32Array
+  | Uint8ClampedArray
+  | Float32Array
+  | Float64Array
+  | DataView
+
 // ---------------------------------------------------------------------
 // io types
 // ---------------------------------------------------------------------
@@ -101,6 +113,35 @@ export type EdgeFetchFunction = (
 ) => Promise<EdgeFetchResponse>
 
 /**
+ * The React Native Typescript types don't contain a WebSocket?!
+ * This is copied from the spec WebIDL.
+ */
+export type EdgeWebSocket = {
+  +url: string,
+
+  // ready state
+  +CONNECTING: 0,
+  +OPEN: 1,
+  +CLOSING: 2,
+  +CLOSED: 3,
+  +readyState: string,
+  +bufferedAmount: string,
+
+  // networking
+  onopen: Function,
+  onerror: Function,
+  onclose: Function,
+  +extensions: string,
+  +protocol: string,
+  close(code?: number, reason?: string): void,
+
+  // messaging
+  onmessage: Function,
+  binaryType: 'arraybuffer',
+  send(data: string | ArrayBuffer | ArrayBufferView): void
+}
+
+/**
  * Access to platform-specific resources.
  * The core never talks to the outside world on its own,
  * but always goes through this object.
@@ -120,7 +161,7 @@ export type EdgeIo = {
   // Deprecated:
   // eslint-disable-next-line no-use-before-define
   +console: EdgeConsole,
-  +WebSocket: typeof WebSocket
+  +WebSocket: EdgeWebSocket
 }
 
 // logging -------------------------------------------------------------
