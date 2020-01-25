@@ -39,7 +39,7 @@ export function decrypt(box: JsonBox, key: Uint8Array): Uint8Array {
 
   // Decrypt:
   const cipher = new AesCbc(key, iv)
-  const raw = cipher.decrypt(ciphertext)
+  const raw: Uint8Array = cipher.decrypt(ciphertext)
   // Alternative using node.js crypto:
   // const decipher = crypto.createDecipheriv('AES-256-CBC', key, iv);
   // let x = decipher.update(box.data_base64, 'base64', 'hex')
