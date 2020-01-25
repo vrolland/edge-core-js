@@ -1,0 +1,148 @@
+import { mapFiles, mapFolders } from 'disklet'
+import { bridgifyObject } from 'yaob'
+
+import {
+  EdgeDataStore,
+  EdgePluginData,
+  EdgeWalletInfo
+} from '../../types/types'
+import { ApiInput } from '../root-pixie'
+import {
+  getStorageWalletFolder,
+  hashStorageWalletFilename
+} from '../storage/storage-selectors'
+
+function getPluginsFolder(ai: ApiInput, accountWalletInfo: EdgeWalletInfo) {
+  const folder = getStorageWalletFolder(ai.props.state, accountWalletInfo.id)
+  return folder.folder('Plugins')
+}
+
+function getPluginFolder(
+  ai: ApiInput,
+  accountWalletInfo: EdgeWalletInfo,
+  storeId: string
+) {
+  const folder = getPluginsFolder(ai, accountWalletInfo)
+  return folder.folder(
+    hashStorageWalletFilename(ai.props.state, accountWalletInfo.id, storeId)
+  )
+}
+
+function getPluginFile(
+  ai: ApiInput,
+  accountWalletInfo: EdgeWalletInfo,
+  storeId: string,
+  itemId: string
+) {
+  const folder = getPluginFolder(ai, accountWalletInfo, storeId)
+  return folder.file(
+    hashStorageWalletFilename(ai.props.state, accountWalletInfo.id, itemId) +
+      '.json'
+  )
+}
+
+export function makeDataStoreApi(
+  ai: ApiInput,
+  accountId: string
+): EdgeDataStore {
+  const { accountWalletInfo } = ai.props.state.accounts[accountId]
+
+  const out: EdgeDataStore = {
+    async deleteItem(storeId: string, itemId: string): Promise<void> {
+      const file = getPluginFile(ai, accountWalletInfo, storeId, itemId)
+      await file.delete()
+    },
+
+    async deleteStore(storeId: string): Promise<void> {
+      const folder = getPluginFolder(ai, accountWalletInfo, storeId)
+      await folder.delete()
+    },
+
+    async listItemIds(storeId: string): Promise<string[]> {
+      const folder = getPluginFolder(ai, accountWalletInfo, storeId)
+
+      const itemIds = await mapFiles(folder, file =>
+        file
+          .getText()
+          .then(text => JSON.parse(text).key)
+          .catch(e => undefined)
+      )
+      return itemIds.filter(itemId => typeof itemId === 'string')
+    },
+
+    async listStoreIds(): Promise<string[]> {
+      const folder = getPluginsFolder(ai, accountWalletInfo)
+
+      const storeIds = await mapFolders(folder, folder =>
+        folder
+          .file('Name.json')
+          .getText()
+          .then(text => JSON.parse(text).name)
+          .catch(e => undefined)
+      )
+      return storeIds.filter(storeId => typeof storeId === 'string')
+    },
+
+    async getItem(storeId: string, itemId: string): Promise<string> {
+      const file = getPluginFile(ai, accountWalletInfo, storeId, itemId)
+      const text = await file.getText()
+      return JSON.parse(text).data
+    },
+
+    async setItem(
+      storeId: string,
+      itemId: string,
+      value: string
+    ): Promise<void> {
+      // Set up the plugin folder, if needed:
+      const folder = getPluginFolder(ai, accountWalletInfo, storeId)
+      const storeIdFile = folder.file('Name.json')
+      try {
+        const text = await storeIdFile.getText()
+        if (JSON.parse(text).name !== storeId) {
+          throw new Error(`Warning: folder name doesn't match for ${storeId}`)
+        }
+      } catch (e) {
+        await storeIdFile.setText(JSON.stringify({ name: storeId }))
+      }
+
+      // Set up the actual item:
+      const file = getPluginFile(ai, accountWalletInfo, storeId, itemId)
+      await file.setText(JSON.stringify({ key: itemId, data: value }))
+    }
+  }
+  bridgifyObject(out)
+
+  return out
+}
+
+export function makePluginDataApi(dataStore: EdgeDataStore): EdgePluginData {
+  const out: EdgePluginData = {
+    deleteItem(pluginId: string, itemId: string): Promise<void> {
+      return dataStore.deleteItem(pluginId, itemId)
+    },
+
+    deletePlugin(pluginId: string): Promise<void> {
+      return dataStore.deleteStore(pluginId)
+    },
+
+    listItemIds(pluginId: string): Promise<string[]> {
+      return dataStore.listItemIds(pluginId)
+    },
+
+    listPluginIds(): Promise<string[]> {
+      return dataStore.listStoreIds()
+    },
+
+    getItem(pluginId: string, itemId: string): Promise<string> {
+      return dataStore.getItem(pluginId, itemId)
+    },
+
+    setItem(pluginId: string, itemId: string, value: string): Promise<void> {
+      return dataStore.setItem(pluginId, itemId, value)
+    }
+  }
+  bridgifyObject(out)
+
+  return out
+}
