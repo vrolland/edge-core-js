@@ -20,7 +20,7 @@ import { timeout } from './util/promise.js'
 export { makeFakeIo } from './core/fake/fake-io.js'
 export * from './types/types.js'
 
-function onErrorDefault(e: any): mixed {
+function onErrorDefault(e: any): void {
   console.error(e)
 }
 
