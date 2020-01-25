@@ -80,7 +80,7 @@ const withLogin2 = (
     if (json.loginAuth !== login.loginAuth) {
       return passwordErrorResponse(0)
     }
-    if (login.otpKey && !checkTotp(login.otpKey, json.otp)) {
+    if (login.otpKey != null && !checkTotp(login.otpKey, json.otp)) {
       return otpErrorResponse(OTP_RESET_TOKEN)
     }
     return server({ ...request, login })
@@ -95,7 +95,7 @@ const withLogin2 = (
     if (json.passwordAuth !== login.passwordAuth) {
       return passwordErrorResponse(0)
     }
-    if (login.otpKey && !checkTotp(login.otpKey, json.otp)) {
+    if (login.otpKey != null && !checkTotp(login.otpKey, json.otp)) {
       return otpErrorResponse(OTP_RESET_TOKEN)
     }
     return server({ ...request, login })
@@ -110,7 +110,7 @@ const withLogin2 = (
     if (json.pin2Auth !== login.pin2Auth) {
       return passwordErrorResponse(0)
     }
-    if (login.otpKey && !checkTotp(login.otpKey, json.otp)) {
+    if (login.otpKey != null && !checkTotp(login.otpKey, json.otp)) {
       return otpErrorResponse(OTP_RESET_TOKEN)
     }
     return server({ ...request, login })
@@ -132,7 +132,7 @@ const withLogin2 = (
         return passwordErrorResponse(0)
       }
     }
-    if (login.otpKey && !checkTotp(login.otpKey, json.otp)) {
+    if (login.otpKey != null && !checkTotp(login.otpKey, json.otp)) {
       return otpErrorResponse(OTP_RESET_TOKEN)
     }
     return server({ ...request, login })
@@ -149,7 +149,7 @@ const availableRoute: ApiServer = pickMethod({
     if (typeof json.l1 !== 'string') {
       return statusResponse(statusCodes.invalidRequest)
     }
-    if (db.getLoginById(json.l1)) {
+    if (db.getLoginById(json.l1) != null) {
       return statusResponse(statusCodes.accountExists)
     }
     return statusResponse(statusCodes.success, 'Account available')
@@ -159,7 +159,7 @@ const availableRoute: ApiServer = pickMethod({
 const create1Route: ApiServer = pickMethod({
   POST: async request => {
     const { db, json } = request
-    if (typeof json.l1 === 'string' && db.getLoginById(json.l1)) {
+    if (typeof json.l1 === 'string' && db.getLoginById(json.l1) != null) {
       return statusResponse(statusCodes.accountExists)
     }
 
@@ -236,7 +236,7 @@ const otpResetRoute: ApiServer = pickMethod({
       return statusResponse(statusCodes.invalidRequest)
     }
     const login = db.getLoginById(json.l1)
-    if (!login || json.otp_reset_auth !== OTP_RESET_TOKEN) {
+    if (login == null || json.otp_reset_auth !== OTP_RESET_TOKEN) {
       return statusResponse(statusCodes.invalidPassword)
     }
     const { otpKey, otpTimeout } = login
@@ -355,7 +355,8 @@ async function createLogin(
   const row: DbLogin = filterObject(data, loginCreateColumns)
   if (login != null) {
     const children = db.getLoginsByParent(login)
-    const appIdExists = children.find(child => child.appId === data.appId)
+    const appIdExists =
+      children.find(child => child.appId === data.appId) != null
     if (appIdExists) {
       return statusResponse(statusCodes.invalidAppId)
     }
@@ -635,10 +636,10 @@ const messagesRoute: ApiServer = pickMethod({
     const out = []
     for (const loginId of loginIds) {
       const login = db.getLoginById(loginId)
-      if (login) {
+      if (login != null) {
         out.push({
           loginId,
-          otpResetPending: !!login.otpResetDate,
+          otpResetPending: login.otpResetDate != null,
           recovery2Corrupt: false
         })
       }
